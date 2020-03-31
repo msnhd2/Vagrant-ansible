@@ -1,0 +1,34 @@
+# -*- mode: ruby -*-
+# vi: set ft=ruby :
+$script = <<-SCRIPT
+    sudo yum update && yum upgrade -y
+	sudo yum install vim -y
+	sudo yum install nano -y
+    sudo yum install ansible -y
+	sudo yum install epel-release -y
+	sudo yum install python2-pip -y
+	sudo pip install ansible --upgrade
+	cd /etc/ansible
+	mv ansible.cfg  ansible.cfg_original
+	sudo yum install git -y
+	git clone https://github.com/msnhd2/ansible.git
+	cd /etc/ansible/ansible
+	mv ansible.cfg /etc/ansible
+	rm -rf /etc/ansible/ansible
+	export TERM=linux
+SCRIPT
+# Vagrant Settings
+Vagrant.configure("2") do |config|
+  config.vm.box = "centos/7"
+  config.vm.box_check_update = false
+  config.vm.network "private_network", ip: "192.168.254.18"
+  config.disksize.size = "12GB" # You need install plugin vagrant-disksize on vagrant. For this, do vagrant plugin install vagrant-disksize.
+  config.vm.provision "shell", inline: $script
+  #Virtualbox Settings
+  config.vm.provider "virtualbox" do |vb|
+    vb.gui = false
+    vb.name = "Centos_7"
+    vb.memory = "1024"
+    vb.cpus = "1"
+  end
+end
